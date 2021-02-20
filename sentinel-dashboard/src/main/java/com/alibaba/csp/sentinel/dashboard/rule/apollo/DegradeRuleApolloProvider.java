@@ -39,11 +39,14 @@ public class DegradeRuleApolloProvider implements DynamicRuleProvider<List<Degra
     @Autowired
     private Converter<String, List<DegradeRuleEntity>> converter;
 
+    @Autowired
+    private ApolloConfig apolloConfig;
+
     @Override
     public List<DegradeRuleEntity> getRules(String appName) throws Exception {
-        String appId = ApolloConfigUtil.SENTINEL_APOLLO_PROJECT;
-        String flowDataId = ApolloConfigUtil.getFlowDataId(appName);
-        OpenNamespaceDTO openNamespaceDTO = apolloOpenApiClient.getNamespace(appId, "DEV", "default", "application");
+        String appId = apolloConfig.getSentinelApolloProject();
+        String flowDataId = ApolloConfigUtil.getDegradeDataId(appName);
+        OpenNamespaceDTO openNamespaceDTO = apolloOpenApiClient.getNamespace(appId, apolloConfig.getEnv(), "default", apolloConfig.getNamespace());
         String rules = openNamespaceDTO
             .getItems()
             .stream()

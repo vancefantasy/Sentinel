@@ -26,13 +26,10 @@ import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-/**
- * @author hantianwei@gmail.com
- * @since 1.5.0
- */
-@Configuration
+
+@Component
 public class ApolloConfig {
 
     @Value("${apollo.portal.url:http://localhost:8070}")
@@ -43,6 +40,13 @@ public class ApolloConfig {
 
     @Value("${apollo.sentinel.appid}")
     private String sentinelApolloProject;
+
+    @Value("${apollo.env:dev}")
+    private String env;
+
+    @Value("${apollo.namespace:KpServer.sentinel}")
+    private String namespace;
+
 
     @Bean
     public Converter<List<FlowRuleEntity>, String> flowRuleEntityEncoder() {
@@ -100,5 +104,29 @@ public class ApolloConfig {
             .withToken(token)
             .build();
         return client;
+    }
+
+    public String getSentinelApolloProject() {
+        return sentinelApolloProject;
+    }
+
+    public void setSentinelApolloProject(String sentinelApolloProject) {
+        this.sentinelApolloProject = sentinelApolloProject;
+    }
+
+    public String getEnv() {
+        return env;
+    }
+
+    public void setEnv(String env) {
+        this.env = env;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 }

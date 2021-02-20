@@ -39,11 +39,14 @@ public class FlowRuleApolloProvider implements DynamicRuleProvider<List<FlowRule
     @Autowired
     private Converter<String, List<FlowRuleEntity>> converter;
 
+    @Autowired
+    private ApolloConfig apolloConfig;
+
     @Override
     public List<FlowRuleEntity> getRules(String appName) throws Exception {
-        String appId = ApolloConfigUtil.SENTINEL_APOLLO_PROJECT;
+        String appId = apolloConfig.getSentinelApolloProject();
         String flowDataId = ApolloConfigUtil.getFlowDataId(appName);
-        OpenNamespaceDTO openNamespaceDTO = apolloOpenApiClient.getNamespace(appId, "DEV", "default", "application");
+        OpenNamespaceDTO openNamespaceDTO = apolloOpenApiClient.getNamespace(appId, apolloConfig.getEnv(), "default", apolloConfig.getNamespace());
         String rules = openNamespaceDTO
             .getItems()
             .stream()

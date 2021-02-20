@@ -38,6 +38,9 @@ public class DegradeRuleApolloPublisher implements DynamicRulePublisher<List<Deg
     @Autowired
     private Converter<List<DegradeRuleEntity>, String> converter;
 
+    @Autowired
+    private ApolloConfig apolloConfig;
+
     @Override
     public void publish(String app, List<DegradeRuleEntity> rules) throws Exception {
         AssertUtil.notEmpty(app, "app name cannot be empty");
@@ -46,21 +49,21 @@ public class DegradeRuleApolloPublisher implements DynamicRulePublisher<List<Deg
         }
 
         // Increase the configuration
-        String appId = ApolloConfigUtil.SENTINEL_APOLLO_PROJECT;
-        String flowDataId = ApolloConfigUtil.getFlowDataId(app);
+        String appId = apolloConfig.getSentinelApolloProject();
+        String flowDataId = ApolloConfigUtil.getDegradeDataId(app);
         OpenItemDTO openItemDTO = new OpenItemDTO();
         openItemDTO.setKey(flowDataId);
         openItemDTO.setValue(converter.convert(rules));
-        openItemDTO.setComment("Program auto-join");
-        openItemDTO.setDataChangeCreatedBy("some-operator");
-        apolloOpenApiClient.createOrUpdateItem(appId, "DEV", "default", "application", openItemDTO);
+        openItemDTO.setComment("modify by sentinel-dashboard");
+        openItemDTO.setDataChangeCreatedBy("apollo");
+        apolloOpenApiClient.createOrUpdateItem(appId, apolloConfig.getEnv(), "default", apolloConfig.getNamespace(), openItemDTO);
 
         // Release configuration
         NamespaceReleaseDTO namespaceReleaseDTO = new NamespaceReleaseDTO();
         namespaceReleaseDTO.setEmergencyPublish(true);
-        namespaceReleaseDTO.setReleaseComment("Modify or add configurations");
-        namespaceReleaseDTO.setReleasedBy("some-operator");
-        namespaceReleaseDTO.setReleaseTitle("Modify or add configurations");
-        apolloOpenApiClient.publishNamespace(appId, "DEV", "default", "application", namespaceReleaseDTO);
+        namespaceReleaseDTO.setReleaseComment("release by sentinel-dashboard");
+        namespaceReleaseDTO.setReleasedBy("apollo");
+        namespaceReleaseDTO.setReleaseTitle("release by sentinel-dashboard");
+        apolloOpenApiClient.publishNamespace(appId, apolloConfig.getEnv(), "default", apolloConfig.getNamespace(), namespaceReleaseDTO);
     }
 }

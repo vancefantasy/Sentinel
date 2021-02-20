@@ -27,8 +27,6 @@ public final class ApolloConfigUtil {
     public static final String SYSTEM_DATA_ID_POSTFIX = "-system-rules";
     public static final String PARAMFLOW_DATA_ID_POSTFIX = "-param-flow-rules";
 
-    public static final String SENTINEL_APOLLO_PROJECT = "kp-sentinel";
-
     private ApolloConfigUtil() {
     }
 
